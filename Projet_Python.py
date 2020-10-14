@@ -45,6 +45,9 @@ fig.write_html('first_figure.html', auto_open=True)
 #importing library
 import csv
 import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+
 
 ## opening the csv file in 'w+' mode 
 file = open('candles.csv', 'w+', newline ='')
@@ -66,13 +69,35 @@ df_new=pd.read_csv('candles.csv',names=header_list)
 #adding a new column to df_new
 df_new["Converted_time"]=dates ##question ici : pourquoi pas df_new[Converted_time]
 
+
 #write the new df to the csv file
 df_new.to_csv("candles.csv", index=False)
 
 
+###Descriptive statistics
+
+#summarizing data
+df_new.describe(include='all')#describe function does give the mean, std etc.??
+
+#further details on the data
+df_new.info()
+
+#calculate the prix gap between open and close
+#add a new column to the dataframe df_new
+df_new["prix_gap"]=df_new["Open"]-df_new["Close"]
+
+##plot with matplotlib.pyplot
+df_new=df_new.cumsum()
+plt.figure(); df_new.plot(); plt.legend(loc='best')
+#le figure est que un ligne droit, bizzare,quel est le plt.figure()?plt()?
+#quel est le différence avec plotly??
 
 
+##plot avec plot
+df_new.plot(x='Converted_time', y='prix_gap')#série chronologie
+df_new.plot(x='Converted_time', y="Open") #we can see some trands from the plot
+df_new.plot(x='Converted_time', y="Close") #we can see some trands from the plot
 
-
+###est-ce que le prix a suivi une loi???lequel??
 
 
