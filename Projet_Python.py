@@ -112,11 +112,10 @@ bitcoin_data=pd.read_csv('C:/Users/lizheng/Documents/PythonScripts/candles.csv',
 
 kwargs={'bt_close_high_gap': lambda x: 2*(x['High']- x['Close'])/(x['High']-x['Low'])-1,
             'bt_volatility': lambda x: (x['High']- x['Low'])/(x['Open']) }
-bitcoin_info = bitcoin_data.assign(**kwargs)
+bitcoin_info = bitcoin_data.assign(**kwargs) #Assign new columns to a DataFrame with function assign()
 
 #select the columns from bitcoin_info to model
-model_data=bitcoin_info[['Close','bt_close_high_gap','bt_volatility','Volume']]
-model_data["dates"] = dates
+model_data=bitcoin_info[['Close','bt_close_high_gap','bt_volatility','Volume','dates']]
 
 #see the structure of the model_data : close and volume are not normalised
 model_data.head()
