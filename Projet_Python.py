@@ -60,47 +60,45 @@ with file:
 ##adding a new column named converted_time to the csv file
 
 #CREATE dataframe with no column names by setting header=None
-df=pd.read_csv('candles.csv', header=None)
+df=pd.read_csv('candles.csv', header=0) #if header=None, then the first row of df is the names of columns
 
 #create dataframe with column names by wirting a header_list
-header_list=["Timestamp", "Open", "High", "Low", "Close", "Volume"]
-df_new=pd.read_csv('candles.csv',names=header_list)
+#header_list=["Timestamp", "Open", "High", "Low", "Close", "Volume"]
+#df_new=pd.read_csv('candles.csv',names=header_list)
 
-#adding a new column to df_new
-#df_new["Converted_time"]=dates ##question ici : pourquoi pas df_new[Converted_time]
+#adding a new column "dates" that is converted time to df
+df["dates"]=dates
+
+#write the new df to the csv file thus we get a complete csv for us to work on 
+df.to_csv("C:/Users/lizheng/Documents/PythonScripts/candles.csv", index=False)
 
 
-#write the new df to the csv file
-df_new.to_csv("candles.csv", index=False)
-
-
-###Descriptive statistics
+### third week: Descriptive statistics
 
 #summarizing data
-df_new.describe(include='all')#describe function does give the mean, std etc.??
+df.describe(include='all')#describe function does give the mean, std etc.??
 
 #further details on the data
-df_new.info()
+df.info()
 
 #calculate the prix gap between open and close
 #add a new column to the dataframe df_new
-df_new["prix_gap"]=df_new["Open"]-df_new["Close"]
+df["prix_gap"]=df_new["Open"]-df_new["Close"]
 
 ##plot with matplotlib.pyplot
-df_new=df_new.cumsum()
-plt.figure(); df_new.plot(); plt.legend(loc='best')
+df=df_new.cumsum()
+plt.figure(); df.plot(); plt.legend(loc='best')
 #le figure est que un ligne droit, bizzare,quel est le plt.figure()?plt()?
 #quel est le différence avec plotly??
 
 
 ##plot avec plot
-df_new.plot(x='Converted_time', y='prix_gap')#série chronologie
-df_new.plot(x='Converted_time', y="Open") #we can see some trands from the plot
-df_new.plot(x='Converted_time', y="Close") #we can see some trands from the plot
+df.plot(x='dates', y='prix_gap')#série chronologie
+df.plot(x='dates', y="Open") #we can see some trands from the plot
+df.plot(x='dates', y="Close") #we can see some trands from the plot
 
-###est-ce que le prix a suivi une loi???lequel??
 
-###'4th' week : algorithm for predicting the close price
+###'4th' week :LSTM algorithm for predicting the close price
 #importing library for processing data
 import csv
 import pandas as pd
@@ -108,7 +106,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 #obtain the dataframe from the registered csv file
-bitcoin_data=pd.read_csv('candles.csv', sep=',')
+bitcoin_data=pd.read_csv('C:/Users/lizheng/Documents/PythonScripts/candles.csv', sep=',')
 
 #create useful columns for the LSTM (long short term memory) model: bt_close_high_gap represents the gap between the closing price and price high for that day
 
@@ -173,16 +171,15 @@ from keras.layers import Dropout
 #input_shape: the shape of the training set
 #Droupout layer is a type of regularization technique which is used to prevent overfitting
 
+#generally people define a build_model function for conducting the LSTM model with its different layers
 
 def build_model(inputs, output_size, neurons, activ_func="linear",
                 dropout=0.25, loss="mae", optimizer="adam"):
     model = Sequential()
-
     model.add(LSTM(neurons, input_shape=(inputs.shape[1], inputs.shape[2])))
     model.add(Dropout(dropout))
     model.add(Dense(units=output_size))
     model.add(Activation(activ_func))
-
     model.compile(loss=loss, optimizer=optimizer)
     return model
 
